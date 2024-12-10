@@ -34,7 +34,7 @@ jobs:
       - name: Install Dependencies (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          choco install llvm cmake ninja --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+          choco install llvm cmake ninja visualstudio2022buildtools --installargs "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended" --yes
           setx PATH "%PATH%;C:\Program Files\LLVM\bin"
           clang-cl --version
           cmake --version
