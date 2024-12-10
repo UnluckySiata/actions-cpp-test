@@ -33,17 +33,18 @@ jobs:
       - name: Install Dependencies (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+          choco install llvm cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+          clang --version
           cmake --version
 
       # Configure Build
       - name: Configure Build
-        run: cmake --preset=${{ matrix.preset }}
+        run: cmake --preset=${{ matrix.preset }}-release
 
       # Build Project
       - name: Build Project
         run: |
-          cmake --build build/debug/${{ matrix.preset }}
+          cmake --build build/release/${{ matrix.preset }}
 
       # Upload Linux Binary
       - name: Upload Linux Binary
