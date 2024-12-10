@@ -9,6 +9,9 @@ jobs:
   build-and-release:
     runs-on: windows-latest
 
+    permissions:
+      contents: write
+
     steps:
       # Checkout the repository
       - name: Checkout code
@@ -39,6 +42,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./bin/app
-          asset_name: app-windows
+          asset_path: ./bin/app.exe
+          asset_name: app-windows.exe
           asset_content_type: application/octet-stream
