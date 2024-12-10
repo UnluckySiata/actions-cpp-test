@@ -1,0 +1,47 @@
+name: Build and Release for Linux
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger only on tag pushes.
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-22.04
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install Dependencies
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          wget https://apt.llvm.org/llvm.sh
+          chmod +x llvm.sh
+          sudo ./llvm.sh 18
+          sudo apt-get install -y clang-18 lld-18 cmake ninja-build
+          clang-18 --version
+          cmake --version
+          ninja --version
+
+      # Configure Build
+      - name: Configure Build
+        run: cmake --preset=linux-release
+
+      # Build Project
+      - name: Build Project
+        run: |
+          cmake --build build/release/linux
+
+      # Upload Linux Binary
+      - name: Upload Linux Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./bin/app
+          asset_name: app-linux
+          asset_content_type: application/octet-stream

@@ -1,0 +1,44 @@
+name: Build and Release for Windows
+
+on:
+  push:
+    tags:
+      - 'v*' 
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install Dependencies
+      - name: Install Dependencies 
+        run: |
+          choco install llvm cmake ninja --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+          setx PATH "%PATH%;C:\Program Files\LLVM\bin"
+          clang-cl --version
+          cmake --version
+          ninja --version
+
+      # Configure Build
+      - name: Configure Build
+        run: cmake --preset=windows-release
+
+      # Build Project
+      - name: Build Project
+        run: |
+          cmake --build build/release/windows
+
+      # Upload Windows Binary
+      - name: Upload Windows Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./bin/app.exe 
+          asset_name: app-windows.exe
+          asset_content_type: application/octet-stream
