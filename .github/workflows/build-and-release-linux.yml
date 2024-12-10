@@ -1,9 +1,9 @@
 name: Build and Release for Linux
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types:
+      - created 
 
 jobs:
   build-and-release:
@@ -35,25 +35,13 @@ jobs:
         run: |
           cmake --build build/release/linux
 
-      # Create GitHub Release
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-
       # Upload Linux Binary
       - name: Upload Linux Binary
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          upload_url: ${{ github.event.release.upload_url }}
           asset_path: ./bin/app
           asset_name: app-linux
           asset_content_type: application/octet-stream
