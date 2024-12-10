@@ -26,16 +26,18 @@ jobs:
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 18
-          sudo apt-get install -y clang-18 lld-18 cmake
+          sudo apt-get install -y clang-18 lld-18 cmake ninja-build
           clang --version
           cmake --version
+          ninja --version
 
       - name: Install Dependencies (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          choco install llvm cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+          choco install llvm cmake ninja --installargs 'ADD_CMAKE_TO_PATH=System' --yes
           clang --version
           cmake --version
+          ninja --version
 
       # Configure Build
       - name: Configure Build
