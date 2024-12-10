@@ -27,7 +27,7 @@ jobs:
           chmod +x llvm.sh
           sudo ./llvm.sh 18
           sudo apt-get install -y clang-18 lld-18 cmake ninja-build
-          clang --version
+          clang-18 --version
           cmake --version
           ninja --version
 
@@ -35,7 +35,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           choco install llvm cmake ninja --installargs 'ADD_CMAKE_TO_PATH=System' --yes
-          clang --version
+          setx PATH "%PATH%;C:\Program Files\LLVM\bin"
+          clang-cl --version
           cmake --version
           ninja --version
 
