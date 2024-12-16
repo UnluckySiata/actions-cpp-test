@@ -20,7 +20,7 @@ jobs:
       # Install Dependencies
       - name: Install Dependencies 
         run: |
-          choco install llvm cmake ninja --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+          choco install llvm cmake ninja 7zip --installargs 'ADD_CMAKE_TO_PATH=System' --yes
           setx PATH "%PATH%;C:\Program Files\LLVM\bin"
           clang-cl --version
           cmake --version
@@ -35,6 +35,13 @@ jobs:
         run: |
           cmake --build build/release/windows
 
+      - name: Zip results
+        run: |
+          mkdir zip_contents
+          mv bin/app zip_contents/
+          cp -r assets zip_contents/
+          7z a output.zip zip_contents
+
       # Upload Windows Binary
       - name: Upload Windows Binary
         uses: actions/upload-release-asset@v1
@@ -42,6 +49,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./bin/app.exe
-          asset_name: app-windows.exe
+          asset_path: ./output.zip
+          asset_name: app-windows.zip
           asset_content_type: application/octet-stream
