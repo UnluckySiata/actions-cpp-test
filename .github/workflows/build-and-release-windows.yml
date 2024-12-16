@@ -38,7 +38,7 @@ jobs:
       - name: Zip results
         run: |
           mkdir zip_contents
-          mv bin/app zip_contents/
+          mv bin/app.exe zip_contents/
           cp -r assets zip_contents/
           7z a output.zip zip_contents
 
