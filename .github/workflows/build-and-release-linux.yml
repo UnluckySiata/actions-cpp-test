@@ -51,6 +51,7 @@ jobs:
           Type=Application
           Name=APP-TEST
           Exec=app
+          Categories=Game;
           EOL
 
           for lib in $(ldd $BINARY_PATH | awk '{ if ($3 ~ /^\//) print $3 }'); do
