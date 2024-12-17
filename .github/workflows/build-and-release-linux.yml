@@ -54,21 +54,9 @@ jobs:
             cp --parents "$lib" "$APP_DIR/usr/lib/"
           done
 
-          cat > $APP_DIR/app.desktop <<EOL
-          [Desktop Entry]
-          Type=Application
-          Name=APP-TEST
-          Exec=app
-          Icon=icon
-          Categories=Game;
-          EOL
+          ls -l $APP_DIR/usr/lib
 
-          cat > $APP_DIR/AppRun <<EOL
-          #!/bin/bash
-          HERE="\$(dirname "\$(readlink -f "\$0")")"
-          export LD_LIBRARY_PATH="\$HERE/usr/lib:\$LD_LIBRARY_PATH"
-          exec "\$HERE/usr/bin/$(basename $BINARY_PATH)" "\$@"
-          EOL
+          cp ./appimage/AppRun ./appimage/app.desktop $APP_DIR
           chmod +x $APP_DIR/AppRun
 
           ./$APPIMAGE_TOOL $APP_DIR "app.AppImage"
