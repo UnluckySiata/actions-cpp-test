@@ -48,18 +48,15 @@ jobs:
 
           cp ./assets/icon.png $APP_DIR
 
-          ldd $BINARY_PATH
           for lib in $(ldd $BINARY_PATH | awk '{ if ($3 ~ /^\//) print $3 }'); do
             echo "adding $lib to shared libs"
             cp $lib $APP_DIR/usr/lib/
           done
 
-          ls -l $APP_DIR/usr/lib
-
           cp ./appimage/AppRun ./appimage/app.desktop $APP_DIR
           chmod +x $APP_DIR/AppRun
 
-          ./$APPIMAGE_TOOL $APP_DIR "app.AppImage"
+          ./$APPIMAGE_TOOL $APP_DIR app.AppImage
 
       - name: Zip results
         run: |
