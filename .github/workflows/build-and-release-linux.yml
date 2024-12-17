@@ -48,7 +48,9 @@ jobs:
 
           cp ./assets/icon.png $APP_DIR
 
+          ldd $BINARY_PATH
           for lib in $(ldd $BINARY_PATH | awk '{ if ($3 ~ /^\//) print $3 }'); do
+            echo "adding $lib to shared libs"
             cp --parents "$lib" "$APP_DIR/usr/lib/"
           done
 
