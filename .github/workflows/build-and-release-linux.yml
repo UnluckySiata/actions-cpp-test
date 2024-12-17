@@ -46,6 +46,13 @@ jobs:
           mkdir -p $APP_DIR/usr/bin $APP_DIR/usr/lib
           cp $BINARY_PATH $APP_DIR/usr/bin/
 
+          cat > $APP_DIR/app.desktop <<EOL
+          #!/bin/bash
+          Type=Application
+          Name=APP-TEST
+          Exec=app
+          EOL
+
           for lib in $(ldd $BINARY_PATH | awk '{ if ($3 ~ /^\//) print $3 }'); do
             cp --parents "$lib" "$APP_DIR/usr/lib/"
           done
