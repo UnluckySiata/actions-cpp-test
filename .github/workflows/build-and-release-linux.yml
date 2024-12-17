@@ -13,37 +13,56 @@ jobs:
       contents: write
 
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Install Dependencies
       - name: Install Dependencies
         run: |
           sudo apt-get update
           wget https://apt.llvm.org/llvm.sh
           chmod +x llvm.sh
           sudo ./llvm.sh 18
-          sudo apt-get install -y clang-18 lld-18 libc++-18-dev libc++abi-18-dev cmake ninja-build zip
+          sudo apt-get install -y clang-18 lld-18 libc++-18-dev libc++abi-18-dev cmake ninja-build zip wget
           clang-18 --version
           cmake --version
           ninja --version
 
-      # Configure Build
       - name: Configure Build
         run: cmake --preset=linux-release
 
-      # Build Project
       - name: Build Project
         run: |
           cmake --build build/release/linux
 
+      - name: Create an AppImage
+        run: |
+          BINARY_PATH="./bin/app"
+          APP_DIR="./AppDir"
+          APPIMAGE_TOOL="appimagetool-x86_64.AppImage"
+
+          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/$APPIMAGE_TOOL
+          chmod +x $APPIMAGE_TOOL
+
+          mkdir -p $APP_DIR/usr/bin $APP_DIR/usr/lib
+          cp $BINARY_PATH $APP_DIR/usr/bin/
+
+          for lib in $(ldd $BINARY_PATH | awk '{ if ($3 ~ /^\//) print $3 }'); do
+            cp --parents "$lib" "$APP_DIR/usr/lib/"
+          done
+
+          cat > $APP_DIR/AppRun <<EOL
+          #!/bin/bash
+          HERE="\$(dirname "\$(readlink -f "\$0")")"
+          export LD_LIBRARY_PATH="\$HERE/usr/lib:\$LD_LIBRARY_PATH"
+          exec "\$HERE/usr/bin/$(basename $BINARY_PATH)" "\$@"
+          EOL
+          chmod +x $APP_DIR/AppRun
+
+          ./$APPIMAGE_TOOL $APP_DIR "app.AppImage"
+
       - name: Zip results
         run: |
-          mkdir zip_contents
-          mv bin/app zip_contents/
-          cp -r assets zip_contents/
-          zip -r output.zip zip_contents
+          zip -r output.zip assets app.AppImage
 
       # Upload Linux Binary
       - name: Upload Linux Binary

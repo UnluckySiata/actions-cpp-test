@@ -1,9 +1,9 @@
 name: Build and Release for Windows
 
-on:
-  release:
-    types:
-      - created
+# on:
+#   release:
+#     types:
+#       - created
 
 jobs:
   build-and-release:
