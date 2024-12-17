@@ -46,17 +46,20 @@ jobs:
           mkdir -p $APP_DIR/usr/bin $APP_DIR/usr/lib
           cp $BINARY_PATH $APP_DIR/usr/bin/
 
+          cp ./assets/icon.png $APP_DIR
+
+          for lib in $(ldd $BINARY_PATH | awk '{ if ($3 ~ /^\//) print $3 }'); do
+            cp --parents "$lib" "$APP_DIR/usr/lib/"
+          done
+
           cat > $APP_DIR/app.desktop <<EOL
           [Desktop Entry]
           Type=Application
           Name=APP-TEST
           Exec=app
+          Icon=icon
           Categories=Game;
           EOL
-
-          for lib in $(ldd $BINARY_PATH | awk '{ if ($3 ~ /^\//) print $3 }'); do
-            cp --parents "$lib" "$APP_DIR/usr/lib/"
-          done
 
           cat > $APP_DIR/AppRun <<EOL
           #!/bin/bash
