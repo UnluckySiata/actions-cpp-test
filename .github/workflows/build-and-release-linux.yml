@@ -51,7 +51,7 @@ jobs:
           ldd $BINARY_PATH
           for lib in $(ldd $BINARY_PATH | awk '{ if ($3 ~ /^\//) print $3 }'); do
             echo "adding $lib to shared libs"
-            cp --parents "$lib" "$APP_DIR/usr/lib/"
+            cp $lib $APP_DIR/usr/lib/
           done
 
           ls -l $APP_DIR/usr/lib
