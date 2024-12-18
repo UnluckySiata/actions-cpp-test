@@ -53,6 +53,8 @@ jobs:
             cp $lib $APP_DIR/usr/lib/
           done
 
+          cp /lib64/ld-linux-x86-64.so.2 $APP_DIR/usr/lib/
+
           cp ./appimage/AppRun ./appimage/app.desktop $APP_DIR
           chmod +x $APP_DIR/AppRun
 
