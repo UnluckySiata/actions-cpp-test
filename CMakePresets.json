@@ -31,7 +31,7 @@
         },
         {
             "name": "linux-release",
-            "inherits": "linux",
+            "inherits": "default",
             "binaryDir": "${sourceDir}/build/release/linux",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
